@@ -1,0 +1,216 @@
+LiteLife Application - Line by Line Code Explanation
+
+1. main.go
+----------
+1-5: Package declaration and imports
+- main: Main package declaration
+- log: For logging server events
+- net/http: For HTTP server functionality
+- os: For file system operations
+- database: Custom package for database operations
+- handlers: Custom package for HTTP handlers
+
+7-12: Main function setup
+- Creates required directories for static files
+- Initializes database connection
+- Sets up template parsing
+- Configures static file serving
+
+14-30: Route Definitions
+- Authentication routes (/login, /register)
+- User routes (/user, /build-request, /room-booking)
+- Admin routes (/admin, /admin-build-requests, /admin-room-booking)
+- WebSocket route (/ws)
+
+32-35: Server startup
+- Starts WebSocket broadcast goroutine
+- Initializes HTTP server on port 8080
+
+2. handlers/auth.go
+------------------
+1-7: Package imports
+- database/sql: For database operations
+- html/template: For template parsing
+- net/http: For HTTP handling
+- gorilla/sessions: For session management
+
+9-11: Global variables
+- store: Session store configuration
+- templates: Template cache
+
+13-15: Template initialization
+- Parses all HTML templates in templates directory
+
+17-65: Authentication handlers
+- LoginHandler: Renders login page
+- RegisterHandler: Renders registration page
+- LoginProcessHandler: Validates credentials
+- RegisterProcessHandler: Creates new user
+- LogoutHandler: Clears session
+
+3. handlers/repair.go
+--------------------
+1-4: Package imports
+- net/http: For HTTP handling
+- models: Custom package for data structures
+- database: Custom package for database operations
+
+6-35: BuildRequestHandler
+- Checks user session
+- Renders repair request form
+- Handles form submission
+
+37-65: SubmitRequestHandler
+- Validates POST request
+- Extracts form data
+- Inserts request into database
+- Redirects to user dashboard
+
+67-111: AdminRequestsHandler
+- Verifies admin session
+- Retrieves all repair requests
+- Renders admin view
+- Handles request approval
+
+4. handlers/booking.go
+---------------------
+1-4: Package imports
+- net/http: For HTTP handling
+- models: Custom package for data structures
+- database: Custom package for database operations
+
+6-35: RoomBookingHandler
+- Checks user session
+- Renders booking form
+- Handles form submission
+
+37-80: SubmitBookingHandler
+- Validates POST request
+- Checks room availability
+- Inserts booking into database
+- Handles conflicts
+
+82-156: AdminRoomBookingsHandler
+- Verifies admin session
+- Retrieves all bookings
+- Renders admin view
+- Handles booking approval/rejection
+
+5. handlers/chat.go
+------------------
+1-7: Package imports
+- encoding/json: For JSON handling
+- gorilla/websocket: For WebSocket support
+- net/http: For HTTP handling
+- models: Custom package for data structures
+- database: Custom package for database operations
+
+9-15: WebSocket configuration
+- Sets up upgrader with buffer sizes
+- Configures origin checking
+
+17-19: Global variables
+- clients: Map of connected WebSocket clients
+- broadcast: Channel for message broadcasting
+
+21-143: Chat functionality
+- LoadMessages: Retrieves chat history
+- SendMessageHandler: Processes new messages
+- DeleteMessageHandler: Removes messages
+- HandleWebSocket: Manages WebSocket connections
+- BroadcastMessages: Sends messages to all clients
+
+6. models/models.go
+------------------
+1-4: Package imports
+- gorilla/websocket: For WebSocket support
+- time: For timestamp handling
+
+6-87: Data structures
+- Client: WebSocket client information
+- User: User account details
+- RepairRequest: Repair service request
+- ChatMessage: Chat message details
+- RoomBooking: Room reservation details
+
+7. database/db.go
+----------------
+1-4: Package imports
+- database/sql: For database operations
+- log: For logging
+- lib/pq: PostgreSQL driver
+
+6-8: Global variables
+- DB: Database connection pool
+
+10-80: Database setup
+- InitDB: Initializes database connection
+- createTables: Creates required tables
+- Table definitions for users, requests, messages, bookings
+
+8. templates/adminindex.html
+---------------------------
+1-144: HTML structure
+- DOCTYPE and head section
+- CSS styling
+- Navigation bar
+- Dashboard content
+- Chat container
+
+145-181: JavaScript functionality
+- WebSocket connection
+- Message handling
+- Message deletion
+- Auto-scrolling
+
+9. templates/adminBuildRequests.html
+----------------------------------
+1-148: HTML structure
+- DOCTYPE and head section
+- CSS styling
+- Navigation bar
+- Request table
+- Approval buttons
+
+10. templates/adminRoomBooking.html
+---------------------------------
+1-175: HTML structure
+- DOCTYPE and head section
+- CSS styling
+- Navigation bar
+- Booking table
+- Approval/rejection buttons
+
+Key Features Implementation:
+--------------------------
+1. Session Management
+- Uses gorilla/sessions for secure session handling
+- Stores username in session
+- Validates session on each request
+
+2. Database Operations
+- Uses prepared statements for security
+- Implements connection pooling
+- Handles transactions properly
+
+3. Real-time Chat
+- WebSocket implementation for live updates
+- Message broadcasting to all clients
+- Message persistence in database
+
+4. Form Handling
+- Input validation
+- Error handling
+- Success/error messages
+
+5. Security Measures
+- Session-based authentication
+- SQL injection prevention
+- Input sanitization
+- Access control
+
+6. User Interface
+- Responsive design
+- Consistent styling
+- Interactive elements
+- Status indicators 
